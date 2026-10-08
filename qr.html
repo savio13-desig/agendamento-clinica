@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Placa de QR · Clínica Marés</title>
+<link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+<div class="selo-demo">Amostra de demonstração · novapicks</div>
+<main>
+  <div class="nao-imprimir">
+    <h1>Placa de QR da clínica</h1>
+    <p style="color:var(--texto-suave)">Imprima e coloque na receção, na montra e nas salas de espera. O utente aponta a câmara e marca sem escrever nada.</p>
+    <label for="base">Endereço da página de marcação</label><input type="text" id="base" inputmode="url">
+    <div class="acoes"><button class="btn btn-primario" id="imprimir" type="button">Imprimir placa</button></div>
+  </div>
+  <div class="placa" id="placa" aria-live="polite"></div>
+</main>
+<script src="vendor/qrcode.js"></script>
+<script src="js/dados.js"></script>
+<script>
+(function () {
+  "use strict";
+  var base = document.getElementById("base"), box = document.getElementById("placa"), C = window.CLINICA;
+  function esc(t) { return String(t).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  base.value = location.href.replace(/qr\.html.*$/, "index.html");
+  function desenhar() {
+    var q = qrcode(0, "M"); q.addData(base.value || "https://"); q.make();
+    box.innerHTML = "<h2>" + esc(C.nome) + "</h2><p><b>Marque a sua consulta</b></p>" + q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }).replace("<svg", '<svg class="qr" role="img" aria-label="QR code de marcação"') + "<p>Aponte a câmara do telemóvel.<br>Sem filas, sem telefonemas.</p>";
+  }
+  base.addEventListener("input", desenhar);
+  document.getElementById("imprimir").addEventListener("click", function () { window.print(); });
+  desenhar();
+})();
+</script>
+</body>
+</html>
